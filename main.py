@@ -22,9 +22,7 @@ def get_current_price(ticker_symbol):
             return todays_data['Close'].iloc[-1]
         else:
             info = ticker.info
-            if 'previousClose' in info:
-                return info['previousClose']
-            elif 'regularMarketPreviousClose' in info:
+            if 'regularMarketPreviousClose' in info:
                 return info['regularMarketPreviousClose']
             st.warning(f"Could not fetch current price for {ticker_symbol}. Using 0.")
             return 0.0
