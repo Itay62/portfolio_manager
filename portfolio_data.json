@@ -1,0 +1,41 @@
+{
+    "initial_cash": 27000.0,
+    "cash_flows": [
+        {
+            "amount": 2000.0,
+            "date": "2025-05-24",
+            "description": ""
+        },
+        {
+            "amount": 25631.59,
+            "date": "2025-05-24",
+            "description": ""
+        }
+    ],
+    "transactions": [
+        {
+            "ticker": "ACHR",
+            "quantity": 476.6438095238095,
+            "buy_price": 10.5,
+            "date": "2025-05-23"
+        },
+        {
+            "ticker": "BULL",
+            "quantity": 375.19262603461254,
+            "buy_price": 13.29,
+            "date": "2025-05-24"
+        },
+        {
+            "ticker": "TGTX",
+            "quantity": 287.68699654775605,
+            "buy_price": 34.76,
+            "date": "2025-05-21"
+        },
+        {
+            "ticker": "IBIT",
+            "quantity": 178.7794086810652,
+            "buy_price": 47.69,
+            "date": "2025-02-28"
+        }
+    ]
+}
