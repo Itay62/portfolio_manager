@@ -297,12 +297,12 @@ with col_holdings_table:
         for ticker, data in summary['holdings'].items():
             holdings_df_data.append({
                 "Ticker": ticker,
-                "Quantity": data['quantity'], # Will show calculated (potentially fractional) quantity
+                "% Change": f"{((data.get('current_price',0) - data['avg_buy_price']) / data['avg_buy_price'] * 100):,.2f}%" if data['avg_buy_price'] and data.get('current_price') is not None else "N/A",
+                "P/L": f"${data.get('profit_loss', 0.0):,.2f}",
+                "Current Value": f"${data.get('current_value', 0.0):,.2f}",
                 "Avg Buy Price": f"${data['avg_buy_price']:,.2f}",
                 "Current Price": f"${data.get('current_price', 0.0):,.2f}",
-                "Current Value": f"${data.get('current_value', 0.0):,.2f}",
-                "P/L": f"${data.get('profit_loss', 0.0):,.2f}",
-                "% Change": f"{((data.get('current_price',0) - data['avg_buy_price']) / data['avg_buy_price'] * 100):,.2f}%" if data['avg_buy_price'] and data.get('current_price') is not None else "N/A"
+                "Quantity": data['quantity'], # Will show calculated (potentially fractional) quantity
             })
         holdings_df = pd.DataFrame(holdings_df_data)
         # Display quantity with more precision if desired, e.g., by formatting the column
