@@ -10,6 +10,11 @@
             "amount": 25631.59,
             "date": "2025-05-24",
             "description": ""
+        },
+        {
+            "amount": -464.54,
+            "date": "2025-05-30",
+            "description": ""
         }
     ],
     "transactions": [
@@ -36,6 +41,30 @@
             "quantity": 178.7794086810652,
             "buy_price": 47.69,
             "date": "2025-02-28"
+        },
+        {
+            "ticker": "KTOS",
+            "quantity": 132.98669859005054,
+            "buy_price": 37.59,
+            "date": "2025-05-28"
+        },
+        {
+            "ticker": "PANW",
+            "quantity": 80.94107489747464,
+            "buy_price": 185.32,
+            "date": "2025-05-29"
+        },
+        {
+            "ticker": "BULL",
+            "quantity": -375.19262603461254,
+            "buy_price": 13.29,
+            "date": "2025-05-30"
+        },
+        {
+            "ticker": "ACHR",
+            "quantity": -476.6438095238095,
+            "buy_price": 9.95,
+            "date": "2025-05-31"
         }
     ]
 }

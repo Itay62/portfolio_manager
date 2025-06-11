@@ -230,6 +230,90 @@ with st.sidebar:
         st.cache_data.clear()
         st.rerun()
 
+        # Add this after the buy transaction form in the sidebar
+    st.subheader("📉 Sell Position")
+    with st.form("sell_transaction_form", clear_on_submit=True):
+        # Make sure portfolio summary is calculated before accessing holdings
+        calculate_portfolio_summary()
+        summary = st.session_state.portfolio_summary
+
+        # Get current holdings for dropdown with their buy prices
+        current_holdings = {}
+        for ticker, data in summary['holdings'].items():
+            if data['quantity'] > 0:
+                # Find original buy price from transactions
+                buy_transactions = [t for t in st.session_state.transactions
+                                    if t['ticker'] == ticker and t['quantity'] > 0]
+                if buy_transactions:
+                    avg_buy_price = sum(t['buy_price'] * t['quantity'] for t in buy_transactions) / \
+                                    sum(t['quantity'] for t in buy_transactions)
+                    current_holdings[ticker] = {
+                        'quantity': data['quantity'],
+                        'avg_buy_price': avg_buy_price
+                    }
+
+        if current_holdings:
+            # Dropdown for selecting ticker from current holdings
+            sell_ticker = st.selectbox(
+                "Select Position to Sell",
+                options=list(current_holdings.keys()),
+                format_func=lambda
+                    x: f"{x} ({current_holdings[x]['quantity']:,.4f} shares, bought @ ${current_holdings[x]['avg_buy_price']:,.2f})"
+            )
+
+            # Get position details
+            position = current_holdings[sell_ticker]
+            max_shares = position['quantity']
+            buy_price = position['avg_buy_price']
+
+            # Allow manual sell price entry
+            sell_price = st.number_input(
+                "Sell Price ($)",
+                min_value=0.01,
+                value=float(buy_price),  # Default to buy price instead of current price
+                step=0.01,
+                format="%.2f",
+                help=f"Original buy price: ${buy_price:,.2f}"
+            )
+
+            # By default, set to sell entire position
+            st.write(f"Selling entire position: {max_shares:,.4f} shares")
+            sell_quantity = max_shares
+            sell_amount = sell_quantity * sell_price
+
+            # Calculate and display preview with profit/loss
+            total_cost = sell_quantity * buy_price
+            profit_loss = sell_amount - total_cost
+
+            st.write("Transaction Preview:")
+            st.write(f"Original Cost: ${total_cost:,.2f} (${buy_price:,.2f}/share)")
+            st.write(f"Sell Proceeds: ${sell_amount:,.2f} (${sell_price:,.2f}/share)")
+            if profit_loss > 0:
+                st.success(f"Realized Profit: ${profit_loss:,.2f}")
+            else:
+                st.error(f"Realized Loss: ${profit_loss:,.2f}")
+
+            sell_submitted = st.form_submit_button("Execute Sell")
+
+            if sell_submitted:
+                # Add sell transaction (negative quantity)
+                st.session_state.transactions.append({
+                    'ticker': sell_ticker,
+                    'quantity': -sell_quantity,  # Negative for sell
+                    'buy_price': sell_price,  # Using specified sell price
+                    'date': datetime.today().strftime("%Y-%m-%d")
+                })
+                save_portfolio_data()  # Auto-save after adding
+                message = (f"Sold {sell_quantity:,.4f} shares of {sell_ticker} for ${sell_amount:,.2f}\n"
+                           f"Realized {'Profit' if profit_loss > 0 else 'Loss'}: ${abs(profit_loss):,.2f}")
+                if profit_loss > 0:
+                    st.success(message)
+                else:
+                    st.warning(message)
+                st.rerun()
+        else:
+            st.info("No positions available to sell. Add some buy transactions first.")
+
 # --- Main Display Area ---
 calculate_portfolio_summary()
 summary = st.session_state.portfolio_summary
