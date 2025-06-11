@@ -95,9 +95,23 @@ def calculate_portfolio_summary():
         net_capital_invested += cf['amount']
 
     holdings = {}
+    realized_profit_loss = 0.0  # Track realized P/L
+    buy_records = {}  # Track buy prices per ticker
+
     for t in st.session_state.transactions:
-        cost = t['quantity'] * t['buy_price'] # This cost is per transaction
+        cost = t['quantity'] * t['buy_price']
         current_cash -= cost
+
+        if t['quantity'] > 0:  # Buy
+            if t['ticker'] not in buy_records:
+                buy_records[t['ticker']] = {'quantity': 0, 'total_cost': 0}
+            buy_records[t['ticker']]['quantity'] += t['quantity']
+            buy_records[t['ticker']]['total_cost'] += t['quantity'] * t['buy_price']
+        else:  # Sell
+            if t['ticker'] in buy_records and buy_records[t['ticker']]['quantity'] > 0:
+                avg_buy_price = buy_records[t['ticker']]['total_cost'] / buy_records[t['ticker']]['quantity']
+                realized_pl = (-t['quantity']) * (t['buy_price'] - avg_buy_price)
+                realized_profit_loss += realized_pl
 
         if t['ticker'] not in holdings:
             holdings[t['ticker']] = {'quantity': 0, 'total_cost': 0.0}
@@ -130,6 +144,7 @@ def calculate_portfolio_summary():
         "holdings": detailed_holdings,
         "total_portfolio_value": total_portfolio_value,
         "total_profit_loss": total_profit_loss,
+        "realized_profit_loss": realized_profit_loss,  # Add realized P/L
         "current_cash": current_cash,
         "net_capital_invested": net_capital_invested
     }
@@ -320,12 +335,13 @@ summary = st.session_state.portfolio_summary
 
 st.header("📈 Portfolio Overview")
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3, col4, col5 = st.columns(5)
 col1.metric("Total Portfolio Value", f"${summary['total_portfolio_value']:,.2f}")
 col2.metric("Total Profit/Loss", f"${summary['total_profit_loss']:,.2f}",
             delta=f"{((summary['total_profit_loss']/summary['net_capital_invested'] if summary['net_capital_invested'] else 0)*100):,.2f}%" if summary['net_capital_invested'] !=0 else "N/A")
-col3.metric("Net Capital Invested", f"${summary['net_capital_invested']:,.2f}")
-col4.metric("Current Cash", f"${summary['current_cash']:,.2f}")
+col3.metric("Lifetime Realized P/L", f"${summary['realized_profit_loss']:,.2f}")
+col4.metric("Net Capital Invested", f"${summary['net_capital_invested']:,.2f}")
+col5.metric("Current Cash", f"${summary['current_cash']:,.2f}")
 
 st.markdown("---")
 

@@ -15,6 +15,16 @@
             "amount": -464.54,
             "date": "2025-05-30",
             "description": ""
+        },
+        {
+            "amount": 464.13,
+            "date": "2025-06-11",
+            "description": ""
+        },
+        {
+            "amount": 0.86,
+            "date": "2025-06-11",
+            "description": ""
         }
     ],
     "transactions": [
@@ -57,7 +67,7 @@
         {
             "ticker": "BULL",
             "quantity": -375.19262603461254,
-            "buy_price": 13.29,
+            "buy_price": 12.02,
             "date": "2025-05-30"
         },
         {
@@ -65,6 +75,12 @@
             "quantity": -476.6438095238095,
             "buy_price": 9.95,
             "date": "2025-05-31"
+        },
+        {
+            "ticker": "AMZN",
+            "quantity": 74.37088656600852,
+            "buy_price": 206.64,
+            "date": "2025-06-02"
         }
     ]
 }
